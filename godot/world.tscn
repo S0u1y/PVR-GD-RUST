@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://rot6gjjklx50"]
+
+[ext_resource type="Texture2D" uid="uid://cmk7fm0yc63ns" path="res://icon.svg" id="1_f3sb7"]
+
+[node name="World" type="World"]
+
+[node name="Player" type="Player" parent="."]
+texture = ExtResource("1_f3sb7")
+region_rect = Rect2(0, 0, 16, 16)

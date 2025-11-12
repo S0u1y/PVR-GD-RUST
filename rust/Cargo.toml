@@ -1,0 +1,10 @@
+[package]
+name = "godot-rust-test"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+godot = "0.4.2"
+
+[lib]
+crate-type = ["cdylib"]
