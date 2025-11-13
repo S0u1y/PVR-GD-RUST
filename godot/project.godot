@@ -20,6 +20,20 @@ config/icon="res://icon.svg"
 version_control/plugin_name="GitPlugin"
 version_control/autoload_on_startup=true
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/rust_auto_compile/plugin.cfg")
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
+
+[rust]
+
+manifest_path="../rust/cargo.toml"
+cargo_path="../rust/target/debug/godot_rust_test.dll"
+
+[rust_tools]
+
+config/build/cargo_package_directories=PackedStringArray("../rust")
+config/build/gdextension_files=PackedStringArray("uid://c38gl6rn2uqlt")
