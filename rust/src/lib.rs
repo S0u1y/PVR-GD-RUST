@@ -1,8 +1,9 @@
+use std::any::Any;
 #[allow(unused)]
 
 use godot::prelude::*;
-use godot::classes::{Sprite2D, ISprite2D, Node2D, INode2D};
-
+use godot::classes::{Sprite2D, ISprite2D, Node2D, INode2D, InputEvent, InputEventMouse, InputEventMouseButton, CanvasItem};
+use godot::global::MouseButton;
 
 struct MyExtension;
 
@@ -38,10 +39,17 @@ struct Player {
 impl ISprite2D for Player {
     fn init(base: Base<Self::Base>) -> Self {
 
-        godot_print!("Player Init");
+        godot_print!("Player Init2");
 
         Self {
             base,
+        }
+    }
+    fn input(&mut self, event: Gd<InputEvent>) {
+        if let Ok(e) = event.try_cast::<InputEventMouseButton>(){
+            if e.get_button_index() == MouseButton::LEFT && e.is_pressed(){
+                godot_print!("{}", self.base().get_global_mouse_position());
+            }
         }
     }
 }
