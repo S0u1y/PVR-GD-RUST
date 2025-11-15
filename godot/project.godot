@@ -22,7 +22,7 @@ version_control/autoload_on_startup=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/rust_auto_compile/plugin.cfg")
+enabled=PackedStringArray("res://addons/rust_tools/plugin.cfg")
 
 [rendering]
 
@@ -30,8 +30,8 @@ textures/canvas_textures/default_texture_filter=0
 
 [rust]
 
-manifest_path="../rust/cargo.toml"
-cargo_path="../rust/target/debug/godot_rust_test.dll"
+cargo_path="cargo"
+manifest_path="../rust/Cargo.toml"
 
 [rust_tools]
 
