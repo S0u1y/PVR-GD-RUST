@@ -147,139 +147,31 @@ clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-alignment = 1
 last_wrap_alignment = 1
 
-[node name="InventorySlot" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
+[node name="InventorySlot" type="InventorySlot" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
+button_mask = 2
+texture_normal = ExtResource("2_ic2qw")
+stretch_mode = 0
 
-[node name="InventorySlot2" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(64, 128)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
+[node name="ItemOptions" type="ItemList" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer/InventorySlot"]
+visible = false
+layout_mode = 0
+offset_left = 32.0
+offset_top = -1.0
+offset_right = 84.0
+offset_bottom = 49.0
+mouse_filter = 1
+theme_override_font_sizes/font_size = 12
+allow_reselect = true
+auto_width = true
+auto_height = true
+item_count = 2
+item_0/text = "Equip"
+item_1/text = "Drop"
 
-[node name="InventorySlot12" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(64, 128)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot3" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(32, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot4" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot13" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot14" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot15" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot16" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot17" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot18" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot28" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot29" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot19" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot20" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot21" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot22" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot23" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot24" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-custom_minimum_size = Vector2(128, 64)
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot25" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot26" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot27" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
-
-[node name="InventorySlot5" type="TextureRect" parent="HBoxContainer/RightSide/ScrollContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 0
-texture = ExtResource("2_ic2qw")
+[connection signal="mouse_exited" from="HBoxContainer/RightSide/ScrollContainer/HBoxContainer/InventorySlot" to="HBoxContainer/RightSide/ScrollContainer/HBoxContainer/InventorySlot" method="handle_mouse_exit"]
+[connection signal="pressed" from="HBoxContainer/RightSide/ScrollContainer/HBoxContainer/InventorySlot" to="HBoxContainer/RightSide/ScrollContainer/HBoxContainer/InventorySlot" method="handle_input"]
