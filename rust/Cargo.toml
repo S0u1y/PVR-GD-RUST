@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 godot = "0.4.2"
+public = "=0.2.2"
 
 [lib]
 crate-type = ["cdylib"]

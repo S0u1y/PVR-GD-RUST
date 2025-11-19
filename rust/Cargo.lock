@@ -104,6 +104,7 @@ name = "godot-rust-test"
 version = "0.1.0"
 dependencies = [
  "godot",
+ "public",
 ]
 
 [[package]]
@@ -147,6 +148,12 @@ checksum = "5ee95bc4ef87b8d5ba32e8b7714ccc834865276eab0aed5c9958d00ec45f49e8"
 dependencies = [
  "unicode-ident",
 ]
+
+[[package]]
+name = "public"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "667546e771dadcc524095906f6b8e6182548519be5f27fd9cb09676b1a3e5cef"
 
 [[package]]
 name = "quote"
