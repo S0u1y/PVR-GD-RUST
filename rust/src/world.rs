@@ -45,7 +45,7 @@ pub impl World {
 
     pub fn register_entity<T>(&mut self, entity: Gd<T>)
 
-    where T: IEntity + Inherits<Sprite2D>
+    where T: IEntity + AsDyn<dyn IEntity> + Inherits<Sprite2D>
     {
         self.entities.push(entity.upcast());
     }
