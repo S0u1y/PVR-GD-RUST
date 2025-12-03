@@ -15,10 +15,11 @@ Currently the game is in heavy WIP. Below are the baseline features of it.
   - [x] Entity list
   - [ ] Faster entities act before slower ones
 
-- [ ] Movement based on A* or other algorithm
+- [x] Movement based on A* or other algorithm
+  - [ ] Show path to mouse position 
     
 - [ ] Enemy/mob AI
 
 - [ ] Hunger, thirst and radiation + their effects
 
-
+- [ ] Basic anomalies
