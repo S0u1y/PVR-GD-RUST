@@ -10,7 +10,7 @@ use crate::world::World;
 #[derive(Eq, PartialEq)]
 enum TargetAction{
     NONE,
-    MOVE(i32, i32),
+    MOVE(Vector2i),
     IDLE,
 
 }
@@ -21,17 +21,45 @@ pub struct Player{
     base: Base<Sprite2D>,
     stats: Stats,
     target_action: TargetAction,
+
+    world: Option<Gd<World>>,
 }
 
 #[godot_dyn]
 impl IEntity for Player{
-    fn act(&self){
+    fn act(&mut self){
         match self.target_action{
             TargetAction::NONE=>{},
             TargetAction::IDLE=>{},
-            TargetAction::MOVE(x,y)=>{
+            TargetAction::MOVE(target_pos)=>{
                 //get current pos and figure out the path to the desired location and move one step
-                godot_print!("Player wants to move to {x}, {y}")
+
+                let ground = self.base().get_node_as::<TileMapLayer>("../Ground");
+                let curr_pos = ground.local_to_map(self.base().get_position());
+
+                if curr_pos == target_pos {//This currently shouldn't be ever called TODO: remove
+                    self.target_action = TargetAction::IDLE;
+                    return;
+                }
+
+                let mut world = self.base().get_parent().unwrap().cast::<World>();
+                let mut self_base_ref = self.base_mut().clone();
+                let mut self_ref = self.to_gd(); //Potentially not a sound approach if bind_mut is called on it (?)
+
+                //A guard on World is created when a signal is called, therefore we can't bind it in here
+                //https://discord.com/channels/723850269347283004/1444108730173231164 (godot-rust discord help thread)
+                world.run_deferred(move |s| {
+                    if let Some(next_cell) = s.get_next_path_coord(curr_pos, target_pos){
+                        self_base_ref.set_position(s.map_to_local(next_cell));
+                            if s.local_to_map(self_base_ref.get_position()) == target_pos{
+                                self_ref.bind_mut().target_action = TargetAction::NONE;
+                            }
+                    }else{ //This currently shouldn't be ever called TODO: remove
+                        self_ref.bind_mut().target_action = TargetAction::NONE;
+                    }
+                });
+
+
             }
         }
 
@@ -59,14 +87,20 @@ impl ISprite2D for Player{
                 ..Default::default()
             },
             target_action: TargetAction::NONE,
+            world: None,
         }
     }
 
     fn ready(&mut self) {
-        if let Some(parent) = self.base().get_parent(){
-            let mut parent = parent.cast::<World>();
-            parent.bind_mut().register_entity(self.to_gd());
-        }
+        self.world = Some(self.base().get_parent().unwrap().cast::<World>());
+        let mut world = self.world.as_mut().unwrap().clone();
+        let mut world_bind = world.bind_mut();
+        world_bind.register_entity(self.to_gd());
+
+        // if let Some(parent) = self.base().get_parent(){
+        //     let mut parent = parent.cast::<World>().clone();
+        //     parent.bind_mut().register_entity(self.to_gd());
+        // }
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
@@ -74,15 +108,11 @@ impl ISprite2D for Player{
             if e.get_button_index() == MouseButton::LEFT && e.is_pressed(){
 
                 if let Some(parent) = self.base().get_parent(){
-                    let roads = parent.get_node_as::<TileMapLayer>("Roads");
-                    let tile_coord = roads.local_to_map(roads.get_local_mouse_position());
-                    let desired_move_position = roads.to_global(roads.map_to_local(tile_coord));
-
-                    // self.base_mut().set_global_position(desired_move_position);
+                    let ground = parent.get_node_as::<TileMapLayer>("Ground");
+                    let tile_coord = ground.local_to_map(ground.get_local_mouse_position());
 
                     self.target_action = TargetAction::MOVE(
-                        desired_move_position.x as i32,
-                        desired_move_position.y as i32,
+                        tile_coord
                     );
 
                 }
@@ -90,3 +120,4 @@ impl ISprite2D for Player{
         }
     }
 }
+
