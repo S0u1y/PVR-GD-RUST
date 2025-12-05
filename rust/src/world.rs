@@ -1,7 +1,7 @@
-use godot::classes::{AStarGrid2D, INode2D, Node2D, Sprite2D, TileMapLayer};
-use godot::obj::{bounds, Base, Bounds};
-use godot::prelude::*;
 use crate::entity::IEntity;
+use godot::classes::{AStarGrid2D, INode2D, Node2D, Sprite2D, TileMapLayer};
+use godot::obj::{Base, Bounds, bounds};
+use godot::prelude::*;
 
 //Mainly to not use "Magic numbers" for tileset atlas ids.
 //If I change it in the editor - I have to change it in here
@@ -12,14 +12,14 @@ enum BuildingTiles {
 
 #[derive(GodotClass)]
 #[class(init, base=Node2D)]
-pub struct World{
+pub struct World {
     base: Base<Node2D>,
     entities: Vec<DynGd<Sprite2D, dyn IEntity>>,
     #[init(node = "Ground")]
     ground: OnReady<Gd<TileMapLayer>>,
     #[init(node = "Buildings")]
     buildings: OnReady<Gd<TileMapLayer>>,
-    astar_grid2d: Gd<AStarGrid2D>
+    astar_grid2d: Gd<AStarGrid2D>,
 }
 
 #[godot_api]
@@ -37,7 +37,6 @@ pub impl INode2D for World {
     // }
 
     fn ready(&mut self) {
-
         let ground = self.ground.clone();
         let buildings = self.buildings.clone();
 
@@ -46,37 +45,39 @@ pub impl INode2D for World {
         self.astar_grid2d.set_region(ground_rect.grow(1));
 
         let tile_set = ground.get_tile_set().unwrap();
-        self.astar_grid2d.set_cell_size(Vector2::new(tile_set.get_tile_size().x as real, tile_set.get_tile_size().y as real));
+        self.astar_grid2d.set_cell_size(Vector2::new(
+            tile_set.get_tile_size().x as real,
+            tile_set.get_tile_size().y as real,
+        ));
         self.astar_grid2d.update();
 
-        let walls = buildings.get_used_cells_by_id_ex().source_id(BuildingTiles::Wall as i32).done();
+        let walls = buildings
+            .get_used_cells_by_id_ex()
+            .source_id(BuildingTiles::Wall as i32)
+            .done();
         for wall in walls.iter_shared() {
             self.astar_grid2d.set_point_solid(wall);
         }
-
     }
-
 }
 
 #[godot_api]
 pub impl World {
     #[func]
-    fn on_world_tick(&mut self){
-        // godot_print!("World ticked. {}", self.entities.len());
-        for entity in self.entities.iter_mut(){
-
+    fn on_world_tick(&mut self) {
+        for entity in self.entities.iter_mut() {
             entity.dyn_bind_mut().act();
-
         }
     }
 
     pub fn register_entity<T>(&mut self, entity: Gd<T>)
-    where T: AsDyn<dyn IEntity> + Inherits<Sprite2D> + Bounds<Declarer = bounds::DeclUser>
+    where
+        T: AsDyn<dyn IEntity> + Inherits<Sprite2D> + Bounds<Declarer = bounds::DeclUser>,
     {
         self.entities.push(entity.into_dyn().upcast());
     }
 
-    pub fn map_to_local(&self, map_coord: Vector2i) -> Vector2{
+    pub fn map_to_local(&self, map_coord: Vector2i) -> Vector2 {
         self.ground.map_to_local(map_coord)
     }
 
@@ -99,5 +100,4 @@ pub impl World {
             Some(path.at(1)) //0 is current cell
         }
     }
-
 }
