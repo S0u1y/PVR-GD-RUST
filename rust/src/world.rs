@@ -1,7 +1,7 @@
 use godot::classes::{AStarGrid2D, INode2D, Node2D, Sprite2D, TileMapLayer};
-use godot::obj::{Base, WithBaseField};
+use godot::obj::{bounds, Base, Bounds};
 use godot::prelude::*;
-use crate::player::{IEntity};
+use crate::entity::IEntity;
 
 //Mainly to not use "Magic numbers" for tileset atlas ids.
 //If I change it in the editor - I have to change it in here
@@ -14,14 +14,17 @@ enum BuildingTiles {
 #[class(init, base=Node2D)]
 pub struct World{
     base: Base<Node2D>,
-    entities: Vec<Gd<Sprite2D>>,
-    ground: Option<Gd<TileMapLayer>>,
-    buildings: Option<Gd<TileMapLayer>>,
+    entities: Vec<DynGd<Sprite2D, dyn IEntity>>,
+    #[init(node = "Ground")]
+    ground: OnReady<Gd<TileMapLayer>>,
+    #[init(node = "Buildings")]
+    buildings: OnReady<Gd<TileMapLayer>>,
     astar_grid2d: Gd<AStarGrid2D>
 }
 
 #[godot_api]
 pub impl INode2D for World {
+    // Automatically handled by class(init)
     // fn init(base: Base<Node2D>) -> Self{
     //     godot_print!("Hello, world!");
     //
@@ -30,17 +33,13 @@ pub impl INode2D for World {
     //         entities: Vec::new(),
     //         // ref_count should be reduced after destructor is called automatically
     //         astar_grid2d: AStarGrid2D::new_gd(),
-    //         ground: None,
-    //         buildings: None,
     //     }
     // }
 
     fn ready(&mut self) {
-        self.ground = Some(self.base().get_node_as::<TileMapLayer>("Ground"));
-        self.buildings = Some(self.base().get_node_as("Buildings"));
 
-        let ground = self.ground.as_ref().unwrap();
-        let buildings = self.buildings.as_ref().unwrap();
+        let ground = self.ground.clone();
+        let buildings = self.buildings.clone();
 
         let ground_rect = ground.get_used_rect();
 
@@ -61,39 +60,33 @@ pub impl INode2D for World {
 
 #[godot_api]
 pub impl World {
-    //NOTE: Theoretically something similar could be done with signals (observer pattern),
-    //      BUT the main reason why I loop through the list is the speed sorting of entities.
     #[func]
     fn on_world_tick(&mut self){
         // godot_print!("World ticked. {}", self.entities.len());
         for entity in self.entities.iter_mut(){
-            // entity.call("_move", &[]); //call through godot BUT forgo trait safeties..
 
-            if let Ok(mut e) = entity.clone().try_dynify::<dyn IEntity>(){
-                //This took foooor eveeer to figure out haha 😄
-                e.dyn_bind_mut().act();
-            }
+            entity.dyn_bind_mut().act();
 
         }
     }
 
     pub fn register_entity<T>(&mut self, entity: Gd<T>)
-    where T: IEntity + AsDyn<dyn IEntity> + Inherits<Sprite2D>
+    where T: AsDyn<dyn IEntity> + Inherits<Sprite2D> + Bounds<Declarer = bounds::DeclUser>
     {
-        self.entities.push(entity.upcast());
+        self.entities.push(entity.into_dyn().upcast());
     }
 
     pub fn map_to_local(&self, map_coord: Vector2i) -> Vector2{
-        self.ground.as_ref().unwrap().map_to_local(map_coord)
+        self.ground.map_to_local(map_coord)
     }
 
     pub fn local_to_map(&self, local_coord: Vector2) -> Vector2i{
-        self.ground.as_ref().unwrap().local_to_map(local_coord)
+        self.ground.local_to_map(local_coord)
     }
 
     pub fn get_next_entity_path_coord(&mut self, entity: Gd<Sprite2D>, target_pos: Vector2i) -> Option<Vector2i>
     {
-        let curr_pos = self.ground.as_ref().unwrap().local_to_map(entity.get_position());
+        let curr_pos = self.local_to_map(entity.get_position());
         self.get_next_path_coord(curr_pos, target_pos)
     }
 

@@ -3,7 +3,7 @@ use godot::classes::{ISprite2D, InputEvent, InputEventMouseButton, Sprite2D, Til
 use godot::global::{godot_print, MouseButton};
 use godot::obj::{Base, Gd};
 use godot::prelude::*;
-pub(crate) use crate::entity::IEntity;
+use crate::entity::IEntity;
 use crate::stats::Stats;
 use crate::world::World;
 
@@ -21,8 +21,7 @@ pub struct Player{
     base: Base<Sprite2D>,
     stats: Stats,
     target_action: TargetAction,
-
-    world: Option<Gd<World>>,
+    world: OnReady<Gd<World>>,
 }
 
 #[godot_dyn]
@@ -49,7 +48,6 @@ impl IEntity for Player{
                 });
             }
         }
-
     }
 }
 
@@ -74,21 +72,16 @@ impl ISprite2D for Player{
                 ..Default::default()
             },
             target_action: TargetAction::NONE,
-            world: None,
+            world: OnReady::manual(),
         }
     }
 
     fn ready(&mut self) {
-        self.world = Some(self.base().get_parent().unwrap().cast::<World>());
-        let mut world = self.world.as_mut().unwrap().clone();
-        let mut world_bind = world.bind_mut();
-        world_bind.register_entity(self.to_gd());
-
-        // if let Some(parent) = self.base().get_parent(){
-        //     let mut parent = parent.cast::<World>().clone();
-        //     parent.bind_mut().register_entity(self.to_gd());
-        // }
+        let s = self.to_gd().clone();
+        self.world.init(s.get_owner().unwrap().cast());
+        self.world.bind_mut().register_entity(s);
     }
+
 
     fn input(&mut self, event: Gd<InputEvent>) {
         if let Ok(e) = event.try_cast::<InputEventMouseButton>(){
