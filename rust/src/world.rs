@@ -63,9 +63,12 @@ pub impl INode2D for World {
 
 #[godot_api]
 pub impl World {
-    #[func]
-    fn on_world_tick(&mut self) {
-        for entity in self.entities.iter_mut() {
+    #[func(gd_self)]
+    fn on_world_tick(mut this: Gd<Self>) {
+        let s = this.bind_mut();
+        let mut entities = (&s).entities.clone();
+        drop(s); //Drop self bind, so entities can use it here
+        for entity in entities.iter_mut() {
             entity.dyn_bind_mut().act();
         }
     }

@@ -34,19 +34,17 @@ impl IEntity for Player {
             TargetAction::MOVE(target_pos) => {
                 //get current pos and figure out the path to the desired location and move one step
 
-                let mut world = self.base().get_parent().unwrap().cast::<World>();
+                let mut world = self.world.clone();
                 let mut self_base_ref = self.base_mut().clone();
-                let mut self_ref = self.to_gd(); //Potentially not a sound approach if bind_mut is called on it (?)
+                let mut world_bind = world.bind_mut();
 
-                world.run_deferred(move |s| {
-                    let curr_pos = s.local_to_map(self_base_ref.get_position());
-                    if let Some(next_cell) = s.get_next_path_coord(curr_pos, target_pos){
-                        self_base_ref.set_position(s.map_to_local(next_cell));
-                            if s.local_to_map(self_base_ref.get_position()) == target_pos{
-                                self_ref.bind_mut().target_action = TargetAction::NONE;
-                            }
+                let curr_pos = world_bind.local_to_map(self_base_ref.get_position());
+                if let Some(next_cell) = world_bind.get_next_path_coord(curr_pos, target_pos){
+                    self_base_ref.set_position(world_bind.map_to_local(next_cell));
+                    if world_bind.local_to_map(self_base_ref.get_position()) == target_pos{
+                        self.target_action = TargetAction::NONE;
                     }
-                });
+                }
             }
         }
     }
