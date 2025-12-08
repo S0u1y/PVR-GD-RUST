@@ -34,14 +34,13 @@ impl IEntity for Player {
             TargetAction::MOVE(target_pos) => {
                 //get current pos and figure out the path to the desired location and move one step
 
-                let mut world = self.world.clone();
                 let mut self_base_ref = self.base_mut().clone();
-                let mut world_bind = world.bind_mut();
+                let mut world_bind = self.world.bind_mut();
 
                 let curr_pos = world_bind.local_to_map(self_base_ref.get_position());
-                if let Some(next_cell) = world_bind.get_next_path_coord(curr_pos, target_pos){
+                if let Some(next_cell) = world_bind.get_next_path_coord(curr_pos, target_pos) {
                     self_base_ref.set_position(world_bind.map_to_local(next_cell));
-                    if world_bind.local_to_map(self_base_ref.get_position()) == target_pos{
+                    if world_bind.local_to_map(self_base_ref.get_position()) == target_pos {
                         self.target_action = TargetAction::NONE;
                     }
                 }

@@ -67,7 +67,7 @@ pub impl World {
     fn on_world_tick(mut this: Gd<Self>) {
         let s = this.bind_mut();
         let mut entities = (&s).entities.clone();
-        drop(s); //Drop self bind, so entities can use it here
+        drop(s); //Drop self bind, so entities can use this object
         for entity in entities.iter_mut() {
             entity.dyn_bind_mut().act();
         }
@@ -84,20 +84,27 @@ pub impl World {
         self.ground.map_to_local(map_coord)
     }
 
-    pub fn local_to_map(&self, local_coord: Vector2) -> Vector2i{
+    pub fn local_to_map(&self, local_coord: Vector2) -> Vector2i {
         self.ground.local_to_map(local_coord)
     }
 
-    pub fn get_next_entity_path_coord(&mut self, entity: Gd<Sprite2D>, target_pos: Vector2i) -> Option<Vector2i>
-    {
+    pub fn get_next_entity_path_coord(
+        &mut self,
+        entity: Gd<Sprite2D>,
+        target_pos: Vector2i,
+    ) -> Option<Vector2i> {
         let curr_pos = self.local_to_map(entity.get_position());
         self.get_next_path_coord(curr_pos, target_pos)
     }
 
-    pub fn get_next_path_coord(&mut self, current_pos: Vector2i, target_pos: Vector2i) -> Option<Vector2i>{
+    pub fn get_next_path_coord(
+        &mut self,
+        current_pos: Vector2i,
+        target_pos: Vector2i,
+    ) -> Option<Vector2i> {
         let path = self.astar_grid2d.get_id_path(current_pos, target_pos);
 
-        if path.len() < 2{
+        if path.len() < 2 {
             None
         } else {
             Some(path.at(1)) //0 is current cell
