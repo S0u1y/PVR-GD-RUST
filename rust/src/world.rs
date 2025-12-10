@@ -73,6 +73,7 @@ pub impl World {
         }
     }
 
+    //TODO: sort entities by speed, in the beginning just use Vec, but later switch to a mix of B-Tree and Linked List.
     pub fn register_entity<T>(&mut self, entity: Gd<T>)
     where
         T: AsDyn<dyn IEntity> + Inherits<Sprite2D> + Bounds<Declarer = bounds::DeclUser>,
