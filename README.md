@@ -20,6 +20,8 @@ Currently the game is in heavy WIP. Below are the baseline features of it.
     
 - [ ] Enemy/mob AI
 
+- [ ] Combat
+
 - [ ] Hunger, thirst and radiation + their effects
 
 - [ ] Basic anomalies
