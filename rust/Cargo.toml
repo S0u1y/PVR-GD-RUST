@@ -3,9 +3,19 @@ name = "godot-rust-test"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+crate-type = ["cdylib"]
+
+[workspace]
+members = [
+    ".",           # The root crate (your main app)
+    "my_macros", "my_macros_decl",   # The new macro crate
+]
+
 [dependencies]
 godot = "0.4.2"
 public = "=0.2.2"
+my_macros = { path = "./my_macros" }
+my_macros_decl = {path = "./my_macros_decl"}
 
-[lib]
-crate-type = ["cdylib"]
+

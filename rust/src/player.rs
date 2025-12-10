@@ -1,53 +1,50 @@
-use crate::entity::IEntity;
+use crate::entity::{Entity, IEntity, TargetAction};
 use crate::stats::Stats;
 use crate::world::World;
 use godot::classes::{ISprite2D, InputEvent, InputEventMouseButton, Sprite2D, TileMapLayer};
 use godot::global::{MouseButton, godot_print};
 use godot::obj::{Base, Gd};
 use godot::prelude::*;
-use std::cmp::PartialEq;
-
-#[derive(Eq, PartialEq)]
-enum TargetAction {
-    NONE,
-    MOVE(Vector2i),
-    IDLE,
-}
+use my_macros::entity_ready;
+use my_macros_decl::base_move;
 
 #[derive(GodotClass)]
 #[class(base=Sprite2D)]
 pub struct Player {
     base: Base<Sprite2D>,
-    stats: Stats,
-    target_action: TargetAction,
+    entity: Entity,
     world: OnReady<Gd<World>>,
 }
 
 #[godot_dyn]
 impl IEntity for Player {
     fn act(&mut self) {
-        match self.target_action {
+        match self.entity.target_action {
             TargetAction::NONE => {}
             TargetAction::IDLE => {
-                self.target_action = TargetAction::NONE;
+                self.entity.target_action = TargetAction::NONE;
             }
             TargetAction::MOVE(target_pos) => {
                 //get current pos and figure out the path to the desired location and move one step
 
-                let mut self_base_ref = self.base_mut().clone();
-                let mut world_bind = self.world.bind_mut();
+                base_move!(self, target_pos);
 
-                let curr_pos = world_bind.local_to_map(self_base_ref.get_position());
-                if let Some(next_cell) = world_bind.get_next_path_coord(curr_pos, target_pos) {
-                    self_base_ref.set_position(world_bind.map_to_local(next_cell));
-                    if world_bind.local_to_map(self_base_ref.get_position()) == target_pos {
-                        self.target_action = TargetAction::NONE;
-                    }
-                }
+                // let mut self_base_ref = self.base_mut().clone();
+                // let mut world_bind = self.world.bind_mut();
+                //
+                // let curr_pos = world_bind.local_to_map(self_base_ref.get_position());
+                // if let Some(next_cell) = world_bind.get_next_path_coord(curr_pos, target_pos) {
+                //     self_base_ref.set_position(world_bind.map_to_local(next_cell));
+                //     if world_bind.local_to_map(self_base_ref.get_position()) == target_pos {
+                //         self.entity.target_action = TargetAction::NONE;
+                //     }
+                // }
             }
         }
     }
 }
+
+
 
 #[godot_api]
 impl ISprite2D for Player {
@@ -56,27 +53,14 @@ impl ISprite2D for Player {
 
         Self {
             base,
-            stats: Stats {
-                thirst: 100,
-                hunger: 100,
-                energy: 100,
-
-                speed: 1,
-                strength: 1,
-                dexterity: 1,
-                endurance: 1,
-
-                ..Default::default()
-            },
-            target_action: TargetAction::NONE,
+            entity: Entity::new(),
             world: OnReady::manual(),
         }
     }
 
+    #[entity_ready]
     fn ready(&mut self) {
-        let s = self.to_gd().clone();
-        self.world.init(s.get_owner().unwrap().cast());
-        self.world.bind_mut().register_entity(s);
+        godot_print!("Player ready");
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
@@ -86,7 +70,7 @@ impl ISprite2D for Player {
                     let ground = parent.get_node_as::<TileMapLayer>("Ground");
                     let tile_coord = ground.local_to_map(ground.get_local_mouse_position());
 
-                    self.target_action = TargetAction::MOVE(tile_coord);
+                    self.entity.target_action = TargetAction::MOVE(tile_coord);
                 }
             }
         }

@@ -4,9 +4,13 @@ mod entity;
 mod player;
 mod stats;
 mod world;
+mod inventory_slot;
 
-use godot::classes::{ITextureButton, ItemList, TextureButton};
+use godot::classes::{ISprite2D, Sprite2D};
 use godot::prelude::*;
+use my_macros::entity_ready;
+use crate::entity::IEntity;
+use crate::world::World;
 
 struct MyExtension;
 
@@ -14,50 +18,32 @@ struct MyExtension;
 unsafe impl ExtensionLibrary for MyExtension {}
 
 #[derive(GodotClass)]
-#[class(base=TextureButton)]
-struct InventorySlot {
-    base: Base<TextureButton>,
-    item_options: Option<Gd<ItemList>>,
+#[class(base=Sprite2D)]
+struct Mob{
+    base: Base<Sprite2D>,
+
+    world: OnReady<Gd<World>>
 }
 
 #[godot_api]
-impl ITextureButton for InventorySlot {
+impl ISprite2D for Mob{
     fn init(base: Base<Self::Base>) -> Self {
         Self {
             base,
-            item_options: None,
+            world: OnReady::manual()
         }
     }
 
+    #[entity_ready]
     fn ready(&mut self) {
-        self.item_options = Some(self.base().get_node_as::<ItemList>("ItemOptions"));
+
     }
+
 }
 
-#[godot_api]
-impl InventorySlot {
-    #[func]
-    fn handle_input(&mut self) {
-        if self.item_options == None {
-            return;
-        }
-        let mut options = self.item_options.as_ref().unwrap().clone();
-        if !options.is_visible() {
-            options.set_visible(true);
-        }
+#[godot_dyn]
+impl IEntity for Mob{
+    fn act(&mut self) {
 
-        let pos = self.base_mut().get_global_mouse_position();
-        options.set_global_position(pos);
-    }
-
-    #[func]
-    fn handle_mouse_exit(&self) {
-        if let Some(options) = &self.item_options {
-            let mut options = options.clone();
-
-            if options.is_visible() {
-                options.set_visible(false);
-            }
-        }
     }
 }
