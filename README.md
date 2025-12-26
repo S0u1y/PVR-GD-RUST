@@ -19,8 +19,11 @@ Currently the game is in heavy WIP. Below are the baseline features of it.
   - [ ] Show path to mouse position 
     
 - [ ] Enemy/mob AI
+  - [ ] Some deeper mechanics like migration
 
 - [ ] Combat
+
+- [ ] Inventory, looting
 
 - [ ] Hunger, thirst and radiation + their effects
 
