@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://c3tlswtxchufq"]
+
+[ext_resource type="Script" uid="uid://ckn7mh0aavqb" path="res://test2.gd" id="1_l1ubt"]
+[ext_resource type="Script" uid="uid://b4ppyvyyfx6af" path="res://two.gd" id="2_oi6or"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_aqk2v"]
+size = Vector2(16, 16)
+
+[node name="BaseContainer" type="TextureButton"]
+offset_right = 16.0
+offset_bottom = 16.0
+button_mask = 3
+texture_normal = SubResource("PlaceholderTexture2D_aqk2v")
+script = ExtResource("1_l1ubt")
+
+[node name="ContextOptions" type="Node" parent="."]
+
+[node name="Open" type="Node" parent="ContextOptions"]
+script = ExtResource("2_oi6or")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

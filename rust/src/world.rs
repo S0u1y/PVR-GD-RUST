@@ -1,7 +1,8 @@
-use crate::entity::IEntity;
+use crate::entity::{IEntity, TargetAction};
 use godot::classes::{AStarGrid2D, INode2D, Node2D, Sprite2D, TileMapLayer};
 use godot::obj::{Base, Bounds, bounds};
 use godot::prelude::*;
+use crate::player::Player;
 
 //Mainly to not use "Magic numbers" for tileset atlas ids.
 //If I change it in the editor - I have to change it in here
@@ -14,7 +15,7 @@ enum BuildingTiles {
 #[class(init, base=Node2D)]
 pub struct World {
     base: Base<Node2D>,
-    entities: Vec<DynGd<Sprite2D, dyn IEntity>>,
+    pub entities: Vec<DynGd<Sprite2D, dyn IEntity>>,
     #[init(node = "Ground")]
     ground: OnReady<Gd<TileMapLayer>>,
     #[init(node = "Buildings")]
@@ -65,6 +66,12 @@ pub impl INode2D for World {
 pub impl World {
     #[func(gd_self)]
     fn on_world_tick(mut this: Gd<Self>) {
+        //If player has not decided on an action, then don't tick the world.
+        {
+            let plr: Gd<Player> = this.get_node_as("%Player");
+            if plr.bind().target_action == TargetAction::NONE { return; }
+        }
+        
         let s = this.bind_mut();
         let mut entities = (&s).entities.clone();
         drop(s); //Drop self bind, so entities can use this object
@@ -73,7 +80,7 @@ pub impl World {
         }
     }
 
-    //TODO: sort entities by speed, in the beginning just use Vec, but later switch to a mix of B-Tree and Linked List.
+    //TODO: sort entities by speed. In the beginning just use Vec, but later switch to a mix of B-Tree and Linked List.
     pub fn register_entity<T>(&mut self, entity: Gd<T>)
     where
         T: AsDyn<dyn IEntity> + Inherits<Sprite2D> + Bounds<Declarer = bounds::DeclUser>,
@@ -103,7 +110,7 @@ pub impl World {
         current_pos: Vector2i,
         target_pos: Vector2i,
     ) -> Option<Vector2i> {
-        let path = self.astar_grid2d.get_id_path(current_pos, target_pos);
+        let path = self.get_path(current_pos, target_pos);
 
         if path.len() < 2 {
             None
@@ -111,4 +118,9 @@ pub impl World {
             Some(path.at(1)) //0 is current cell
         }
     }
+    
+    pub fn get_path(&mut self, current_pos: Vector2i, target_pos: Vector2i) -> Array<Vector2i> {
+        self.astar_grid2d.get_id_path(current_pos, target_pos)
+    }
+    
 }

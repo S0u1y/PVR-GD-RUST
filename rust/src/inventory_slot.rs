@@ -28,7 +28,7 @@ impl ITextureButton for InventorySlot {
 impl InventorySlot {
     #[func]
     fn handle_input(&mut self) {
-        if self.item_options == None {
+        if self.item_options.is_none() {
             return;
         }
         let mut options = self.item_options.as_ref().unwrap().clone();
