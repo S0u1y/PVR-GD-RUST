@@ -68,14 +68,16 @@ impl IEntity for Player {
                     self.target_action = TargetAction::NONE;
                     return;
                 }
-                
-                let pos = self.attack_target.clone().unwrap().get_position().cast_int();
+
                 let world = self.world.bind();
-                let dist = (pos - world.local_to_map(self.to_gd().get_position())).length();
+                let pos = world.local_to_map(self.attack_target.as_ref().unwrap().get_position());
+                let dist = (pos - world.local_to_map(self.base().get_position())).length();
                 drop(world);
 
                 if dist > 1. {
                     base_move!(self, pos, 1);
+                } else {
+                    godot_print!("Mob is close enough to attack.");
                 }
             }
         }
