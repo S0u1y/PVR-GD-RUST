@@ -1,10 +1,9 @@
-[gd_scene load_steps=15 format=4 uid="uid://rot6gjjklx50"]
+[gd_scene load_steps=14 format=4 uid="uid://rot6gjjklx50"]
 
 [ext_resource type="Texture2D" uid="uid://v8cb5y0o0xjq" path="res://assets/tilesets/TilesetBasic.png" id="1_aqk2v"]
 [ext_resource type="PackedScene" uid="uid://c3tlswtxchufq" path="res://Scenes/Interactables/BaseContainer.tscn" id="2_036b0"]
 [ext_resource type="Texture2D" uid="uid://bw0l6vwb4drgl" path="res://assets/Characters/Character.png" id="2_tlwt5"]
 [ext_resource type="PackedScene" uid="uid://dpu3fyn6wd1f8" path="res://Scenes/UI/inventory.tscn" id="4_aqk2v"]
-[ext_resource type="Script" uid="uid://cgfuqjs62b4yi" path="res://test3.gd" id="6_ic0uy"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dwbse"]
 resource_name = "Ground"
@@ -98,6 +97,7 @@ offset_left = 368.0
 offset_top = 32.0
 offset_right = 384.0
 offset_bottom = 48.0
+mouse_behavior_recursive = 2
 
 [node name="Container2" parent="Interactables" instance=ExtResource("2_036b0")]
 offset_left = 496.0
@@ -105,18 +105,13 @@ offset_top = 32.0
 offset_right = 512.0
 offset_bottom = 48.0
 
-[node name="ItemList" type="ItemList" parent="Interactables"]
+[node name="ContextMenu" type="ContextMenu" parent="Interactables"]
 visible = false
-offset_left = 384.0
-offset_top = 32.0
-offset_right = 402.0
-offset_bottom = 49.0
-mouse_filter = 1
+offset_right = 16.0
+offset_bottom = 16.0
 theme_override_font_sizes/font_size = 9
-allow_reselect = true
 auto_width = true
 auto_height = true
-script = ExtResource("6_ic0uy")
 
 [node name="Player" type="Player" parent="." groups=["Huntables"]]
 stats = SubResource("Stats_tlwt5")
@@ -143,5 +138,4 @@ texture = SubResource("PlaceholderTexture2D_tlwt5")
 unique_name_in_owner = true
 visible = false
 
-[connection signal="item_selected" from="Interactables/ItemList" to="Interactables/ItemList" method="_on_item_selected"]
 [connection signal="timeout" from="Timer" to="." method="on_world_tick"]

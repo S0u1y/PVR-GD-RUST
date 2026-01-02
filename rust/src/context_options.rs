@@ -1,7 +1,6 @@
-use std::ops::Deref;
 use godot::classes::{IItemList, ItemList};
 use godot::obj::WithBaseField;
-use godot::prelude::{godot_api, godot_dyn, godot_print, Base, Gd, GodotClass, INode, Node, OnReady, Vector2};
+use godot::prelude::{godot_api, godot_dyn, godot_print, Base, Gd, GodotClass, INode, Inherits, Node, Vector2};
 
 pub trait IContextOption {
     fn select(&self);
@@ -25,12 +24,18 @@ impl IItemList for ContextMenu{
 }
 
 impl ContextMenu {
-    fn show_context(&mut self, position: Vector2, node: &Gd<Node>) {
+    pub fn show_context<T>(&mut self, position: Vector2, node: &Gd<T>)
+    where T: Inherits<Node>
+    {
         self.hide_context();
+
         let mut base = self.base_mut().clone();
 
-        self.context_options = Some(base.get_node_as::<Node>("ContextOptions"));
-        if self.context_options.is_some() {return;}
+        let n = node.clone().upcast();
+        self.context_options = Some(n.get_node_as::<Node>("ContextOptions"));
+        // if self.context_options.is_some() {return;}
+
+        godot_print!("test");
 
         for child in self.context_options.as_ref().unwrap().get_children().iter_shared() {
             base.add_item(&child.get_name().to_string());
@@ -43,7 +48,7 @@ impl ContextMenu {
 
     }
 
-    fn hide_context(&mut self) {
+    pub fn hide_context(&mut self) {
         self.context_options.take();
         let mut s = self.base_mut();
         s.set_visible(false);
