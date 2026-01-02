@@ -8,8 +8,8 @@ crate-type = ["cdylib"]
 
 [workspace]
 members = [
-    ".",           # The root crate (your main app)
-    "my_macros", "my_macros_decl",   # The new macro crate
+    ".",
+    "my_macros", "my_macros_decl",
 ]
 
 [dependencies]

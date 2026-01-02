@@ -87,4 +87,9 @@ impl IEntity for Mob{
             }
         }
     }
+
+    fn get_stats(&self) -> &Gd<Stats> {
+        self.stats.deref()
+    }
+    
 }

@@ -1,3 +1,4 @@
+use std::ops::Deref;
 use crate::entity::{IEntity, TargetAction};
 use crate::world::World;
 use godot::classes::{ISprite2D, InputEvent, InputEventMouseButton, Sprite2D, TileMapLayer};
@@ -81,6 +82,10 @@ impl IEntity for Player {
                 }
             }
         }
+    }
+
+fn get_stats(&self) -> &Gd<Stats> {
+        self.stats.deref()
     }
 }
 
