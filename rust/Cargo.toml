@@ -13,7 +13,7 @@ members = [
 ]
 
 [dependencies]
-godot = "0.4.2"
+godot = { version = "0.4.2", features = ["experimental-threads"] }
 public = "=0.2.2"
 my_macros = { path = "./my_macros" }
 my_macros_decl = {path = "./my_macros_decl"}
