@@ -41,12 +41,11 @@ impl ISprite2D for Player {
     fn unhandled_input(&mut self, event: Gd<InputEvent>) {
         if let Ok(e) = event.try_cast::<InputEventMouseButton>() {
             if e.get_button_index() == MouseButton::LEFT && e.is_pressed() {
-                if let Some(parent) = self.base().get_parent() {
-                    let ground = parent.get_node_as::<TileMapLayer>("Ground");
-                    let tile_coord = ground.local_to_map(ground.get_local_mouse_position());
 
-                    self.target_action = TargetAction::MOVE(tile_coord);
-                }
+                let ground = self.world.get_node_as::<TileMapLayer>("Ground");
+                let tile_coord = ground.local_to_map(ground.get_local_mouse_position());
+
+                self.target_action = TargetAction::MOVE(tile_coord);
             }
         }
     }
