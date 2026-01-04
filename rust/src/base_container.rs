@@ -1,13 +1,35 @@
+use godot::obj::Singleton;
 use godot::classes::{ITextureButton, TextureButton};
 use godot::obj::{Base, OnReady, WithBaseField};
-use godot::prelude::{godot_api, Callable, Gd, GdMut, GodotClass};
+use godot::prelude::{godot_api, godot_print, Array, Callable, Gd, GodotClass, OnEditor};
 use crate::context_options::ContextMenu;
+// use crate::{LootTable, SpawnableItem};
+use crate::item::SpawnableItem;
+use crate::loot_table::LootTable;
+// use crate::TestResource;
+
+trait Container {
+    fn get_inventory(&self) -> &Array<Gd<SpawnableItem>>;
+}
+
+impl Container for BaseContainer {
+    fn get_inventory(&self) -> &Array<Gd<SpawnableItem>> {
+        &self.inventory
+    }
+}
 
 #[derive(GodotClass)]
 #[class(base=TextureButton)]
-struct BaseContainer{
+pub struct BaseContainer{
     base: Base<TextureButton>,
     context_menu: OnReady<Gd<ContextMenu>>,
+
+    inventory: Array<Gd<SpawnableItem>>,
+    #[export]
+    loot_table: Option<Gd<LootTable>>,
+
+    // #[export]
+    // loot_table: Option<Gd<TestList>>,
 
     on_mouse_exited: OnReady<Callable>
 }
@@ -20,11 +42,23 @@ impl ITextureButton for BaseContainer{
             context_menu: OnReady::from_node("../ContextMenu"),
             on_mouse_exited: OnReady::from_base_fn(|b| {
                 b.callable("on_mouse_exited")
-            })
+            }),
+
+            loot_table: None,
+            inventory: Array::new(),
         }
     }
 
-    fn ready(&mut self) {}
+    // fn exit_tree(&mut self) {
+    //     if let Some(context_parent) = self.context_menu.get_parent() {
+    //         if context_parent == self.to_gd().upcast() {
+    //             let parent = self.base().get_parent().unwrap();
+    //             self.context_menu.reparent(&parent);
+    //         }
+    //     }
+    // }
+
+
 
     #[func(gd_self)]
     fn pressed(mut this: Gd<Self>) {
@@ -45,24 +79,33 @@ impl ITextureButton for BaseContainer{
         }
 
     }
-
-    fn exit_tree(&mut self) {
-        if self.context_menu.get_parent() == Option::from(self.to_gd().upcast()) {
-            let parent = self.base().get_parent().unwrap();
-            self.context_menu.reparent(&parent);
-        }
-    }
-
 }
 
+#[godot_api]
 impl BaseContainer{
+    #[func]
     fn on_mouse_exited(&mut self) {
         self.context_menu.bind_mut().hide_context();
 
         let s = &self.to_gd();
-        if self.base().is_connected("mouse_exited", &Callable::from_object_method(s, "on_mouse_exited")) {
-            self.base_mut().disconnect("mouse_exited", &Callable::from_object_method(s, "on_mouse_exited"));
+        if self.base().is_connected("mouse_exited", &self.on_mouse_exited) {
+            self.base_mut().disconnect("mouse_exited", &s.bind().on_mouse_exited);
         }
 
     }
+
+    pub fn spawn_drops(&mut self){
+        if self.loot_table.is_none() {return;}
+
+        godot_print!("test");
+
+        let loot_table = self.loot_table.as_ref().unwrap();
+        for i in 0..=100 {
+            let spawned_item = loot_table.bind().spawn_drop();
+            if spawned_item.is_none() {continue}
+
+            // godot_print!("{}", spawned_item.unwrap().bind().get_item().unwrap().bind().get_name());
+        }
+    }
+
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://rot6gjjklx50"]
+[gd_scene load_steps=17 format=4 uid="uid://rot6gjjklx50"]
 
 [ext_resource type="Texture2D" uid="uid://v8cb5y0o0xjq" path="res://assets/tilesets/TilesetBasic.png" id="1_aqk2v"]
 [ext_resource type="PackedScene" uid="uid://c3tlswtxchufq" path="res://Scenes/Interactables/BaseContainer.tscn" id="2_036b0"]
@@ -71,6 +71,18 @@ texture = ExtResource("1_aqk2v")
 sources/0 = SubResource("TileSetAtlasSource_gbfbk")
 sources/1 = SubResource("TileSetAtlasSource_036b0")
 
+[sub_resource type="SpawnableItem" id="SpawnableItem_aqk2v"]
+spawn_weight = 0.145
+probability = 0.6904761904761905
+
+[sub_resource type="SpawnableItem" id="SpawnableItem_036b0"]
+spawn_weight = 0.065
+probability = 0.30952380952380953
+
+[sub_resource type="LootTable" id="LootTable_aqk2v"]
+total_weight = 0.21
+items = Array[SpawnableItem]([SubResource("SpawnableItem_aqk2v"), SubResource("SpawnableItem_036b0")])
+
 [sub_resource type="Stats" id="Stats_tlwt5"]
 max_health = 100
 health = 100
@@ -100,6 +112,7 @@ offset_bottom = 48.0
 mouse_behavior_recursive = 2
 
 [node name="Container2" parent="Interactables" instance=ExtResource("2_036b0")]
+loot_table = SubResource("LootTable_aqk2v")
 offset_left = 496.0
 offset_top = 32.0
 offset_right = 512.0
@@ -109,6 +122,7 @@ offset_bottom = 48.0
 visible = false
 offset_right = 16.0
 offset_bottom = 16.0
+mouse_filter = 1
 theme_override_font_sizes/font_size = 9
 auto_width = true
 auto_height = true
@@ -138,4 +152,5 @@ texture = SubResource("PlaceholderTexture2D_tlwt5")
 unique_name_in_owner = true
 visible = false
 
+[connection signal="item_selected" from="Interactables/ContextMenu" to="Interactables/ContextMenu" method="item_selected"]
 [connection signal="timeout" from="Timer" to="." method="on_world_tick"]
